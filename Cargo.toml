@@ -1,5 +1,5 @@
 [package]
-name = "rpg"
+name = "carp"
 version = "0.1.0"
 authors = ["aethine <yepicness@gmail.com>"]
 edition = "2018"
@@ -8,3 +8,4 @@ edition = "2018"
 
 [dependencies]
 toml = "0.5.6"
+crates_io_api = "0.5.1"

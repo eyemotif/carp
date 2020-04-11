@@ -1,7 +1,7 @@
 use std::collections::HashMap;
-use std::fs;
 use std::io::{Error, ErrorKind};
-use std::path::Path;
+use std::path::{Path, PathBuf};
+use std::{env, fs};
 use toml::Value;
 
 pub fn read_dependencies(path: &Path) -> Result<Value, Error> {
@@ -19,20 +19,33 @@ pub fn parse_dependencies(value: Value) -> Option<HashMap<String, String>> {
     }
     return Some(map);
 }
-pub fn convert_dependencies(dependencies: &HashMap<String, String>) -> HashMap<String, Value> {
+pub fn read_parse_dependencies(path: &Path) -> Result<HashMap<String, String>, Error> {
+    match parse_dependencies(read_dependencies(path)?) {
+        Some(v) => Ok(v),
+        None => Err(Error::from(ErrorKind::InvalidData)),
+    }
+}
+pub fn unparse_dependencies(dependencies: &HashMap<String, String>) -> HashMap<String, Value> {
     let mut map = HashMap::new();
     for (k, v) in dependencies {
         map.insert(k.to_string(), Value::String(v.to_string()));
     }
     return map;
 }
-
-pub fn write_dependencies(path: &Path, dependencies: &HashMap<String, String>) -> Result<(), Error> {
+pub fn write_dependencies(
+    path: &Path,
+    dependencies: &HashMap<String, String>,
+) -> Result<(), Error> {
     let mut toml_file = read_dependencies(path)?;
-    toml_file["dependencies"] = Value::from(convert_dependencies(dependencies));
+    toml_file["dependencies"] = Value::from(unparse_dependencies(dependencies));
     let toml_string = match toml::ser::to_string(&toml_file) {
         Ok(v) => v,
         Err(e) => return Err(Error::new(ErrorKind::InvalidData, e)),
     };
     return fs::write(path, toml_string);
+}
+pub fn get_toml_path() -> PathBuf {
+    let mut path = env::current_dir().unwrap();
+    path.push("Cargo.toml");
+    return path;
 }
