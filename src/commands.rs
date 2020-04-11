@@ -31,12 +31,44 @@ pub fn add(name: &str, version: Option<&str>) -> Result<(), Error> {
         Err(e) => return Err(Error::new(ErrorKind::Other, format!("{:?}", e))),
     };
     let ver = match version {
-        Some(v) => v,
+        Some(v) => match cratesio::crate_has_version(name, v) {
+            Ok(has_version) => {
+                if has_version {
+                    v
+                } else {
+                    return Err(Error::new(
+                        ErrorKind::InvalidInput,
+                        format!("Crate '{}' does not have the version '{}'", name, v),
+                    ));
+                }
+            }
+            Err(e) => return Err(Error::new(ErrorKind::Other, format!("{:?}", e))),
+        },
         None => &latest,
     };
 
     let path = &utils::get_toml_path();
     let mut dependencies = utils::read_parse_dependencies(path)?;
+    if dependencies.contains_key(name) {
+        return Err(Error::new(
+            ErrorKind::InvalidInput,
+            format!("Dependency '{}' already added", name),
+        ));
+    }
     dependencies.insert(String::from(name), String::from(ver));
+    return utils::write_dependencies(path, &dependencies);
+}
+pub fn rem(name: &str) -> Result<(), Error> {
+    let path = &utils::get_toml_path();
+    let mut dependencies = utils::read_parse_dependencies(path)?;
+    match dependencies.remove_entry(name) {
+        Some(_) => (),
+        None => {
+            return Err(Error::new(
+                ErrorKind::InvalidInput,
+                format!("Dependency '{}' not added", name),
+            ))
+        }
+    };
     return utils::write_dependencies(path, &dependencies);
 }

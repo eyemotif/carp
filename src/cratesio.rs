@@ -24,6 +24,10 @@ pub fn crate_latest(name: &str) -> Result<String, Error> {
     let mut versions = crate_versions(name)?;
     return Ok(versions.remove(0));
 }
+pub fn crate_has_version(name: &str, ver: &str) -> Result<bool, Error> {
+    let versions = crate_versions(name)?;
+    return Ok(versions.contains(&String::from(ver)));
+}
 pub fn crate_updated(name: &str, ver: &str) -> Result<bool, Error> {
     return Ok(compare_version(&crate_latest(name)?, ver));
 }
