@@ -5,13 +5,13 @@ use std::io::{Error, ErrorKind};
 
 pub fn help() {
     println!(
-        "carp: A basic CLI Cargo.toml editor
+        "carp: A basic CLI Rust dependency manager.
     - carp help: Prints this message
     - carp list: Lists all dependencies
     - carp add <crate name> [crate version]: Adds a dependency
-    - carp rem <crate name>: Removes a dependency
-    - carp change <crate name> <crate version>: Changes a dependency's version
-    - carp check [crate name]: Checks if a dependency is up-to-date, or all dependencies if none are specified
+    - carp rem <dependency name>: Removes a dependency
+    - carp change <dependency name> <crate version>: Changes a dependency's version
+    - carp check [crate name]: Checks if a dependency is up to date, or all dependencies if none are specified
     - carp update [crate name]: Updates a dependency, or all dependencies if none are specified"
     )
 }
