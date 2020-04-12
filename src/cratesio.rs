@@ -28,6 +28,11 @@ pub fn crate_has_version(name: &str, ver: &str) -> Result<bool, Error> {
     let versions = crate_versions(name)?;
     return Ok(versions.contains(&String::from(ver)));
 }
-pub fn crate_updated(name: &str, ver: &str) -> Result<bool, Error> {
-    return Ok(compare_version(&crate_latest(name)?, ver));
+pub fn crate_updated(name: &str, ver: &str) -> Result<Option<String>, Error> {
+    let latest = crate_latest(name)?;
+    if compare_version(&latest, ver) {
+        return Ok(None);
+    } else {
+        return Ok(Some(latest));
+    }
 }

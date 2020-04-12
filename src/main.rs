@@ -49,6 +49,54 @@ fn main() {
                 Err(e) => println!("ERROR: {}", e),
             }
         }
+        "check" => {
+            if args.len() <= 2 {
+                match commands::check_all() {
+                    Ok(list) => {
+                        let this_list = &list;
+                        for line in this_list {
+                            println!("{}", line)
+                        }
+                        if this_list.len() == 0 {
+                            println!("All dependencies are up-to-date");
+                        }
+                    }
+                    Err(e) => println!("ERROR: {}", e),
+                }
+            } else {
+                match commands::check(&args[2]) {
+                    Ok(some) => match some {
+                        Some(v) => println!("{}", v),
+                        None => println!("Dependency '{}' is up-to-date", args[2]),
+                    },
+                    Err(e) => println!("ERROR: {}", e),
+                }
+            }
+        }
+        "update" => {
+            if args.len() <= 2 {
+                match commands::update_all() {
+                    Ok(list) => {
+                        let this_list = &list;
+                        for line in this_list {
+                            println!("{}", line)
+                        }
+                        if this_list.len() == 0 {
+                            println!("All dependencies are up-to-date");
+                        }
+                    }
+                    Err(e) => println!("ERROR: {}", e),
+                }
+            } else {
+                match commands::update(&args[2]) {
+                    Ok(some) => match some {
+                        Some(v) => println!("{}", v),
+                        None => println!("Dependency '{}' is up-to-date", args[2]),
+                    },
+                    Err(e) => println!("ERROR: {}", e),
+                }
+            }
+        }
 
         unknown => println!(
             "Unknown command '{}'. Use 'carp help' for a list of commands.",
