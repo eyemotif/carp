@@ -13,12 +13,15 @@ pub fn crate_versions(name: &str) -> Result<Vec<String>, Error> {
         .map(|x| x.num)
         .collect::<Vec<String>>());
 }
-pub fn crate_exists(name: &str) -> bool {
+pub fn crate_exists(name: &str) -> Result<bool, Error> {
     let client = SyncClient::new();
-    match client.get_crate(name) {
-        Ok(_) => true,
-        Err(_) => false,
-    }
+    return match client.get_crate(name) {
+        Ok(_) => Ok(true),
+        Err(e) => match e {
+            Error::NotFound => Ok(false),
+            other => Err(other),
+        },
+    };
 }
 pub fn crate_latest(name: &str) -> Result<String, Error> {
     let mut versions = crate_versions(name)?;

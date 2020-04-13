@@ -8,6 +8,7 @@ use std::io::{Error, ErrorKind};
 fn handle_error(err: Error) {
     match err.kind() {
         ErrorKind::NotFound => println!("ERROR: Cargo.toml file not found"),
+        ErrorKind::InvalidData | ErrorKind::InvalidInput => println!("ERROR: {}", err),
         _ => println!("UNEXPECTED ERROR: {}", err),
     }
 }
@@ -69,7 +70,7 @@ fn main() {
                             println!("{}", line)
                         }
                         if this_list.len() == 0 {
-                            println!("All dependencies are up-to-date");
+                            println!("All dependencies are up to date");
                         }
                     }
                     Err(e) => handle_error(e),
@@ -78,7 +79,7 @@ fn main() {
                 match commands::check(&args[2]) {
                     Ok(some) => match some {
                         Some(v) => println!("{}", v),
-                        None => println!("Dependency '{}' is up-to-date", args[2]),
+                        None => println!("Dependency '{}' is up to date", args[2]),
                     },
                     Err(e) => handle_error(e),
                 }

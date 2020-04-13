@@ -3,6 +3,13 @@ use crate::utils;
 
 use std::io::{Error, ErrorKind};
 
+fn unwrap_io_result<T>(result: Result<T, crates_io_api::Error>) -> Result<T, Error> {
+    match result {
+        Ok(v) => Ok(v),
+        Err(e) => return Err(Error::new(ErrorKind::Other, format!("{}", e))),
+    }
+}
+
 pub fn help() {
     println!(
         "carp: A basic CLI Rust dependency manager.
@@ -22,31 +29,25 @@ pub fn list() -> Result<(), Error> {
     return Ok(());
 }
 pub fn add(name: &str, version: Option<&str>) -> Result<String, Error> {
-    if !cratesio::crate_exists(name) {
+    if !unwrap_io_result(cratesio::crate_exists(name))? {
         return Err(Error::new(
             ErrorKind::InvalidInput,
             format!("Crate '{}' does not exist", name),
         ));
     }
 
-    let latest = match cratesio::crate_latest(name) {
-        Ok(v) => v,
-        Err(e) => return Err(Error::new(ErrorKind::Other, format!("{:?}", e))),
-    };
+    let latest = unwrap_io_result(cratesio::crate_latest(name))?;
     let ver = match version {
-        Some(v) => match cratesio::crate_has_version(name, v) {
-            Ok(has_version) => {
-                if has_version {
-                    v
-                } else {
-                    return Err(Error::new(
-                        ErrorKind::InvalidInput,
-                        format!("Crate '{}' does not have the version '{}'", name, v),
-                    ));
-                }
+        Some(v) => {
+            if unwrap_io_result(cratesio::crate_has_version(name, v))? {
+                v
+            } else {
+                return Err(Error::new(
+                    ErrorKind::InvalidInput,
+                    format!("Crate '{}' does not have the version '{}'", name, v),
+                ));
             }
-            Err(e) => return Err(Error::new(ErrorKind::Other, format!("{:?}", e))),
-        },
+        }
         None => &latest,
     };
 
@@ -89,22 +90,17 @@ pub fn change(name: &str, version: &str) -> Result<String, Error> {
         ));
     }
 
-    if !cratesio::crate_exists(name) {
+    if !unwrap_io_result(cratesio::crate_exists(name))? {
         return Err(Error::new(
             ErrorKind::InvalidInput,
             format!("Crate '{}' does not exist", name),
         ));
     }
-    match cratesio::crate_has_version(name, version) {
-        Ok(b) => {
-            if !b {
-                return Err(Error::new(
-                    ErrorKind::InvalidInput,
-                    format!("Crate '{}' does not have the version '{}'", name, version),
-                ));
-            }
-        }
-        Err(e) => return Err(Error::new(ErrorKind::Other, format!("{:?}", e))),
+    if unwrap_io_result(cratesio::crate_has_version(name, version))? {
+        return Err(Error::new(
+            ErrorKind::InvalidInput,
+            format!("Crate '{}' does not have the version '{}'", name, version),
+        ));
     }
     let old_version = dependencies
         .insert(String::from(name), String::from(version))
@@ -127,21 +123,18 @@ pub fn check(name: &str) -> Result<Option<String>, Error> {
         }
     };
 
-    if !cratesio::crate_exists(name) {
+    if !unwrap_io_result(cratesio::crate_exists(name))? {
         return Err(Error::new(
             ErrorKind::InvalidInput,
             format!("Crate '{}' does not exist", name),
         ));
     }
-    return match cratesio::crate_updated(name, current_ver) {
-        Ok(v) => match v {
-            Some(new_version) => Ok(Some(format!(
-                "! {} ({}): ({})",
-                name, current_ver, new_version,
-            ))),
-            None => Ok(None),
-        },
-        Err(e) => Err(Error::new(ErrorKind::Other, format!("{:?}", e))),
+    return match unwrap_io_result(cratesio::crate_updated(name, current_ver))? {
+        Some(new_version) => Ok(Some(format!(
+            "! {} ({}): ({})",
+            name, current_ver, new_version,
+        ))),
+        None => Ok(None),
     };
 }
 pub fn check_all() -> Result<Vec<String>, Error> {
@@ -159,10 +152,7 @@ pub fn update(name: &str) -> Result<Option<String>, Error> {
     match check(name)? {
         Some(_) => {
             let latest = cratesio::crate_latest(name);
-            return match latest {
-                Ok(l) => Ok(Some(change(name, &l)?)),
-                Err(e) => Err(Error::new(ErrorKind::Other, format!("{:?}", e))),
-            };
+            return Ok(Some(change(name, &unwrap_io_result(latest)?)?));
         }
         None => return Ok(None),
     };
