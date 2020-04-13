@@ -3,6 +3,14 @@ pub mod cratesio;
 pub mod utils;
 
 use std::env;
+use std::io::{Error, ErrorKind};
+
+fn handle_error(err: Error) {
+    match err.kind() {
+        ErrorKind::NotFound => println!("ERROR: Cargo.toml file not found"),
+        _ => println!("UNEXPECTED ERROR: {}", err),
+    }
+}
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -12,10 +20,13 @@ fn main() {
     }
     match args[1].to_lowercase().as_str() {
         "help" => commands::help(),
-        "list" => commands::list(),
+        "list" => match commands::list() {
+            Ok(_) => (),
+            Err(e) => handle_error(e),
+        },
         "add" => {
             if args.len() <= 2 {
-                println!("'carp add' require 1 or 2 parameters");
+                println!("'carp add' requires 1 or 2 parameters");
                 return;
             }
             match commands::add(
@@ -27,7 +38,7 @@ fn main() {
                 },
             ) {
                 Ok(message) => println!("{}", message),
-                Err(e) => println!("ERROR: {}", e),
+                Err(e) => handle_error(e),
             }
         }
         "rem" => {
@@ -37,7 +48,7 @@ fn main() {
             }
             match commands::rem(&args[2]) {
                 Ok(message) => println!("{}", message),
-                Err(e) => println!("ERROR: {}", e),
+                Err(e) => handle_error(e),
             }
         }
         "change" => {
@@ -46,7 +57,7 @@ fn main() {
             }
             match commands::change(&args[2], &args[3]) {
                 Ok(message) => println!("{}", message),
-                Err(e) => println!("ERROR: {}", e),
+                Err(e) => handle_error(e),
             }
         }
         "check" => {
@@ -61,7 +72,7 @@ fn main() {
                             println!("All dependencies are up-to-date");
                         }
                     }
-                    Err(e) => println!("ERROR: {}", e),
+                    Err(e) => handle_error(e),
                 }
             } else {
                 match commands::check(&args[2]) {
@@ -69,7 +80,7 @@ fn main() {
                         Some(v) => println!("{}", v),
                         None => println!("Dependency '{}' is up-to-date", args[2]),
                     },
-                    Err(e) => println!("ERROR: {}", e),
+                    Err(e) => handle_error(e),
                 }
             }
         }
@@ -82,18 +93,18 @@ fn main() {
                             println!("{}", line)
                         }
                         if this_list.len() == 0 {
-                            println!("All dependencies are up-to-date");
+                            println!("All dependencies are up to date");
                         }
                     }
-                    Err(e) => println!("ERROR: {}", e),
+                    Err(e) => handle_error(e),
                 }
             } else {
                 match commands::update(&args[2]) {
                     Ok(some) => match some {
                         Some(v) => println!("{}", v),
-                        None => println!("Dependency '{}' is up-to-date", args[2]),
+                        None => println!("Dependency '{}' is up to date", args[2]),
                     },
-                    Err(e) => println!("ERROR: {}", e),
+                    Err(e) => handle_error(e),
                 }
             }
         }

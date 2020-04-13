@@ -15,15 +15,11 @@ pub fn help() {
     - carp update [crate name]: Updates a dependency, or all dependencies if none are specified"
     )
 }
-pub fn list() {
-    match utils::read_parse_dependencies(&utils::get_toml_path()) {
-        Ok(v) => {
-            for (k, v) in v {
-                println!("{} ({})", k, v)
-            }
-        }
-        Err(e) => println!("{}", e),
+pub fn list() -> Result<(), Error> {
+    for (k, v) in utils::read_parse_dependencies(&utils::get_toml_path())? {
+        println!("{} ({})", k, v);
     }
+    return Ok(());
 }
 pub fn add(name: &str, version: Option<&str>) -> Result<String, Error> {
     if !cratesio::crate_exists(name) {
