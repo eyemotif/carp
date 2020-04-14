@@ -4,7 +4,7 @@ A CLI dependency manager for rust's Cargo.
 ## Commands
 
 ### list
-`carp list`: Lists all dependencies and their installed versions in the current Cargo workspace.
+`carp list`: Lists all dependencies and their installed versions.
 
 ```
 % carp list
@@ -12,7 +12,7 @@ crates_io_api (0.5.1)
 toml (0.5.6)
 ```
 ### add
-`carp add <crate name> [crate version]`: Adds a crate to the dependencies in the current Cargo workspace. If no version is specified, the latest version is used.
+`carp add <crate name> [crate version]`: Adds a crate to the list of dependencies. If no version is specified, the latest version is used.
 
 ```
 % carp add rand
@@ -23,7 +23,7 @@ rand (0.7.3)
 crates_io_api (0.5.1)
 ```
 ### rem
-`carp add <dependency name>`: Removes a dependency from the current Cargo workspace.
+`carp add <dependency name>`: Removes a dependency.
 
 ```
 % carp rem rand
@@ -33,7 +33,7 @@ toml (0.5.6)
 crates_io_api (0.5.1)
 ```
 ### change
-`carp change <dependency name> <crate version>`: Changes the version of a dependcy in the current Cargo workspace..
+`carp change <dependency name> <crate version>`: Changes the version of a dependency.
 
 ```
 % carp change toml 0.5.5
