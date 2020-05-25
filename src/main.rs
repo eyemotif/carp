@@ -54,7 +54,8 @@ fn main() {
         }
         "change" => {
             if args.len() <= 3 {
-                println!("'carp change' requires 2 parameters")
+                println!("'carp change' requires 2 parameters");
+                return;
             }
             match commands::change(&args[2], &args[3]) {
                 Ok(message) => println!("{}", message),
