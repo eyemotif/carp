@@ -96,7 +96,7 @@ pub fn change(name: &str, version: &str) -> Result<String, Error> {
             format!("Crate '{}' does not exist", name),
         ));
     }
-    if unwrap_io_result(cratesio::crate_has_version(name, version))? {
+    if !unwrap_io_result(cratesio::crate_has_version(name, version))? {
         return Err(Error::new(
             ErrorKind::InvalidInput,
             format!("Crate '{}' does not have the version '{}'", name, version),
