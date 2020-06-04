@@ -1,5 +1,5 @@
 [dependencies]
-crates_io_api = "0.6.0"
+crates_io_api = "0.5.1"
 toml = "0.5.6"
 
 [package]
