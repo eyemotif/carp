@@ -5,7 +5,7 @@ fn compare_version(crt: &str, given: &str) -> bool {
 }
 
 pub fn crate_versions(name: &str) -> Result<Vec<String>, Error> {
-    let client = SyncClient::new();
+    let client = SyncClient::new("carp_bot", std::time::Duration::from_millis(1000))?;
     return Ok(client
         .get_crate(name)?
         .versions
@@ -14,11 +14,11 @@ pub fn crate_versions(name: &str) -> Result<Vec<String>, Error> {
         .collect::<Vec<String>>());
 }
 pub fn crate_exists(name: &str) -> Result<bool, Error> {
-    let client = SyncClient::new();
+    let client = SyncClient::new("carp_bot", std::time::Duration::from_millis(1000))?;
     return match client.get_crate(name) {
         Ok(_) => Ok(true),
         Err(e) => match e {
-            Error::NotFound => Ok(false),
+            Error::NotFound(_) => Ok(false),
             other => Err(other),
         },
     };
