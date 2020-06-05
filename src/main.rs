@@ -1,15 +1,20 @@
 mod commands;
 pub mod cratesio;
 pub mod utils;
+pub mod versions;
 
 use std::env;
-use std::io::{Error, ErrorKind};
+use std::io::ErrorKind;
 
-fn handle_error(err: Error) {
-    match err.kind() {
-        ErrorKind::NotFound => println!("ERROR: Cargo.toml file not found"),
-        ErrorKind::InvalidData | ErrorKind::InvalidInput => println!("ERROR: {}", err),
-        _ => println!("UNEXPECTED ERROR: {}", err),
+fn handle_error(err: Box<dyn std::error::Error>) {
+    if let Some(io_err) = err.downcast_ref::<std::io::Error>() {
+        match io_err.kind() {
+            ErrorKind::NotFound => println!("ERROR: Cargo.toml file not found"),
+            ErrorKind::InvalidData | ErrorKind::InvalidInput => println!("ERROR: {}", err),
+            _ => println!("UNEXPECTED ERROR: {}", err),
+        }
+    } else {
+        println!("UNEXPECTED ERROR: {}", err);
     }
 }
 
