@@ -6,14 +6,14 @@ use toml::Value;
 
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
-pub fn read_dependencies(path: &Path) -> Result<Value> {
+fn read_dependencies(path: &Path) -> Result<Value> {
     let file_contents = fs::read_to_string(path)?;
     return match file_contents.parse::<Value>() {
         Ok(v) => Ok(v),
         Err(e) => return Err(Error::new(ErrorKind::InvalidData, e).into()),
     };
 }
-pub fn parse_dependencies(value: Value) -> Option<HashMap<String, String>> {
+fn parse_dependencies(value: Value) -> Option<HashMap<String, String>> {
     let top = value.as_table()?;
     let mut map = HashMap::new();
     for (k, v) in top.get("dependencies")?.as_table()? {
@@ -21,18 +21,19 @@ pub fn parse_dependencies(value: Value) -> Option<HashMap<String, String>> {
     }
     return Some(map);
 }
-pub fn read_parse_dependencies(path: &Path) -> Result<HashMap<String, String>> {
-    match parse_dependencies(read_dependencies(path)?) {
-        Some(v) => Ok(v),
-        None => Err(Error::from(ErrorKind::InvalidData).into()),
-    }
-}
-pub fn unparse_dependencies(dependencies: &HashMap<String, String>) -> HashMap<String, Value> {
+fn unparse_dependencies(dependencies: &HashMap<String, String>) -> HashMap<String, Value> {
     let mut map = HashMap::new();
     for (k, v) in dependencies {
         map.insert(k.to_string(), Value::String(v.to_string()));
     }
     return map;
+}
+
+pub fn read_parse_dependencies(path: &Path) -> Result<HashMap<String, String>> {
+    match parse_dependencies(read_dependencies(path)?) {
+        Some(v) => Ok(v),
+        None => Err(Error::from(ErrorKind::InvalidData).into()),
+    }
 }
 pub fn write_dependencies(path: &Path, dependencies: &HashMap<String, String>) -> Result<()> {
     let mut toml_file = read_dependencies(path)?;

@@ -133,7 +133,7 @@ pub fn check(name: &str) -> Result<Option<String>> {
         )
         .into());
     }
-    return match cratesio::crate_updated(name, current_ver)? {
+    return match cratesio::crate_get_update(name, current_ver)? {
         Some(new_version) => Ok(Some(format!(
             "! {} ({}): ({})",
             name, current_ver, new_version,

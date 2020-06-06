@@ -11,7 +11,7 @@ fn handle_error(err: Box<dyn std::error::Error>) {
         match io_err.kind() {
             ErrorKind::NotFound => println!("ERROR: Cargo.toml file not found"),
             ErrorKind::InvalidData | ErrorKind::InvalidInput => println!("ERROR: {}", err),
-            _ => println!("UNEXPECTED ERROR: {}", err),
+            _ => println!("UNEXPECTED ERROR: {}", io_err),
         }
     } else {
         println!("UNEXPECTED ERROR: {}", err);
