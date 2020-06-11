@@ -15,7 +15,7 @@ pub fn help() {
     - carp change <dependency name> <crate version>: Changes a dependency's version
     - carp check [crate name]: Checks if a dependency is up to date, or all dependencies if none are specified
     - carp update [crate name]: Updates a dependency, or all dependencies if none are specified"
-    )
+    );
 }
 pub fn list() -> Result<()> {
     for (k, v) in utils::read_parse_dependencies(&utils::get_toml_path())? {
@@ -165,9 +165,9 @@ pub fn update_all() -> Result<Vec<String>> {
     let path = &utils::get_toml_path();
     let mut result = Vec::<String>::new();
     for (k, _) in utils::read_parse_dependencies(path)? {
-        let updt = update(&k)?;
-        if updt.is_some() {
-            result.push(updt.unwrap())
+        let maybe_update = update(&k)?;
+        if let Some(update) = maybe_update {
+            result.push(update);
         }
     }
     return Ok(result);

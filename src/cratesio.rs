@@ -1,6 +1,6 @@
 use crate::versions;
 use crates_io_api::{Error, SyncClient};
-use semver::Version;
+use semver::{Version, VersionReq};
 
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
@@ -28,10 +28,9 @@ pub fn crate_latest(name: &str) -> Result<String> {
     return Ok(versions.remove(0));
 }
 pub fn crate_has_version(name: &str, ver: &str) -> Result<bool> {
-    let versions = crate_versions(name)?;
-    let version_compare = Version::parse(ver)?;
-    for version_str in versions {
-        if version_compare == Version::parse(&version_str)? {
+    let version_compare = VersionReq::parse(ver)?;
+    for version_str in crate_versions(name)? {
+        if version_compare.matches(&Version::parse(&version_str)?) {
             return Ok(true);
         }
     }

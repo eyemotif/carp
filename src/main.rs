@@ -25,12 +25,12 @@ fn main() {
         return;
     }
     match args[1].to_lowercase().as_str() {
-        "help" => commands::help(),
-        "list" => match commands::list() {
+        "help" | "h" => commands::help(),
+        "list" | "l" => match commands::list() {
             Ok(_) => (),
             Err(e) => handle_error(e),
         },
-        "add" => {
+        "add" | "a" => {
             if args.len() <= 2 {
                 println!("'carp add' requires 1 or 2 parameters");
                 return;
@@ -47,7 +47,7 @@ fn main() {
                 Err(e) => handle_error(e),
             }
         }
-        "rem" => {
+        "rem" | "r" => {
             if args.len() <= 2 {
                 println!("'carp rem' requires 1 parameter");
                 return;
@@ -57,7 +57,7 @@ fn main() {
                 Err(e) => handle_error(e),
             }
         }
-        "change" => {
+        "change" | "modify" | "m" => {
             if args.len() <= 3 {
                 println!("'carp change' requires 2 parameters");
                 return;
@@ -67,7 +67,7 @@ fn main() {
                 Err(e) => handle_error(e),
             }
         }
-        "check" => {
+        "check" | "c" => {
             if args.len() <= 2 {
                 match commands::check_all() {
                     Ok(list) => {
@@ -91,7 +91,7 @@ fn main() {
                 }
             }
         }
-        "update" => {
+        "update" | "u" => {
             if args.len() <= 2 {
                 match commands::update_all() {
                     Ok(list) => {

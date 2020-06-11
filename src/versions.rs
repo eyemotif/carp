@@ -1,7 +1,8 @@
-use semver::Version;
+use semver::{Version, VersionReq};
 
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
 pub fn compare_version(current: &str, given: &str) -> Result<bool> {
-    return Ok(Version::parse(current)? >= Version::parse(given)?);
+    let is_match = VersionReq::parse(current)?.matches(&Version::parse(given)?);
+    return Ok(is_match);
 }
