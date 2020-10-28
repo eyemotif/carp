@@ -1,7 +1,7 @@
 [dependencies]
-crates_io_api = "0.6.0"
-semver = "0.10.0"
-toml = "0.5.6"
+crates_io_api = "0.6.1"
+semver = "0.11.0"
+toml = "0.5.7"
 
 [package]
 authors = ["aethine <yepicness@gmail.com>"]
