@@ -4,8 +4,11 @@ use semver::{Version, VersionReq};
 
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
+const AGENT: &str = "carp_bot (https://github.com/eyemotif/carp)";
+const RATE_LIMIT: std::time::Duration = std::time::Duration::from_millis(1000);
+
 pub fn crate_versions(name: &str) -> Result<Vec<String>> {
-    let client = SyncClient::new("carp_bot", std::time::Duration::from_millis(1000))?;
+    let client = SyncClient::new(AGENT, RATE_LIMIT)?;
     return Ok(client
         .get_crate(name)?
         .versions
@@ -14,7 +17,7 @@ pub fn crate_versions(name: &str) -> Result<Vec<String>> {
         .collect::<Vec<String>>());
 }
 pub fn crate_exists(name: &str) -> Result<bool> {
-    let client = SyncClient::new("carp_bot", std::time::Duration::from_millis(1000))?;
+    let client = SyncClient::new(AGENT, RATE_LIMIT)?;
     return match client.get_crate(name) {
         Ok(_) => Ok(true),
         Err(e) => match e {

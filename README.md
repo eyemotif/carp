@@ -23,7 +23,7 @@ rand (0.7.3)
 crates_io_api (0.5.1)
 ```
 ### rem
-`carp add <dependency name>`: Removes a dependency.
+`carp rem <dependency name>`: Removes a dependency.
 
 ```
 % carp rem rand
