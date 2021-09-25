@@ -4,7 +4,7 @@ semver = "1.0.4"
 toml = "0.5.8"
 
 [package]
-authors = ["aethine <yepicness@gmail.com>"]
+authors = ["eyemotif <yepicness@gmail.com>"]
 edition = "2018"
 name = "carp"
 version = "0.1.0"
