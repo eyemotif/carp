@@ -1,6 +1,9 @@
 # carp
 A CLI dependency manager for rust's Cargo.
 
+# archival
+See [carp2](https://github.com/eyemotif/carp2)'s README.
+
 ## Commands
 
 ### list
